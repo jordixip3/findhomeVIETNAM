@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindHome Vietnam — Nền Tảng Nhà Ở Chia Sẻ & Co-Living Tại Việt Nam</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+Thai:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="static/css/style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">FH</div>
+        <div class="brand-text">
+          <span class="brand-name">FindHome Vietnam</span>
+          <span class="brand-tagline">Giải Pháp Nhà Ở Văn Minh & Chia Sẻ Tiền Thuê Nhà Tại Việt Nam</span>
+        </div>
+      </div>
+      <nav class="main-nav">
+        <a href="#properties-section" class="nav-link">Listings</a>
+        <a href="#calculator-section" class="nav-link">Calculator</a>
+        <a href="#map-section" class="nav-link">Map</a>
+        <a href="https://wa.me/34603331391?text=Hello%20FindHome Vietnam" target="_blank" class="nav-link whatsapp-nav">
+          💬 WhatsApp +34 603 331 391
+        </a>
+        <button id="btn-open-admin" class="btn btn-outline btn-sm">Admin</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Giải Pháp Nhà Ở Văn Minh & Chia Sẻ Tiền Thuê Nhà Tại Việt Nam</h1>
+      <p class="hero-subtitle">Khám phá căn hộ cao cấp từ Batdongsan và Chợ Tốt. Chia nhỏ chi phí thuê nhà bằng Đồng (₫) cùng cộng đồng văn minh.</p>
+      <div class="portals-badges"><span class="portal-badge active">🇻🇳 Batdongsan</span><span class="portal-badge active">🇻🇳 Chợ Tốt</span><span class="portal-badge active">🇻🇳 Mogi</span><span class="portal-badge active">🇻🇳 Meey Land</span></div>
+    </div>
+  </section>
+
+  <section id="calculator-section" class="calculator-section">
+    <div class="section-container">
+      <div class="calc-card">
+        <h2>Split Calculator (₫)</h2>
+        <div class="calc-grid">
+          <div class="calc-input-group">
+            <label>Total Monthly Rent</label>
+            <input type="number" id="calc-total-rent" value="32000000">
+          </div>
+          <div class="calc-input-group">
+            <label>Roommates</label>
+            <div class="roommate-buttons">
+              <button class="btn-roommate" data-rooms="2">2</button>
+              <button class="btn-roommate" data-rooms="3">3</button>
+              <button class="btn-roommate active" data-rooms="4">4</button>
+            </div>
+          </div>
+          <div class="calc-result-box">
+            <div class="res-item"><span class="res-label">Per Person:</span> <span class="res-value" id="calc-per-person">-</span></div>
+            <a id="btn-calc-whatsapp" href="#" target="_blank" class="btn btn-primary btn-block">Reserve via WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="filters-section">
+    <div class="section-container">
+      <div class="filters-bar">
+        <div class="filter-item"><label>City</label><input type="text" id="filter-city" placeholder="Search city..."></div>
+        <div class="filter-item"><label>Tỉnh / Thành Phố</label><select id="filter-subdivision"><option value="">Các tỉnh thành trọng điểm</option><option value="TP. Hồ Chí Minh (Saigon)">TP. Hồ Chí Minh (Saigon)</option><option value="Hà Nội (Hanoi)">Hà Nội (Hanoi)</option><option value="Đà Nẵng (Da Nang)">Đà Nẵng (Da Nang)</option><option value="Khánh Hòa (Nha Trang)">Khánh Hòa (Nha Trang)</option></select></div>
+        <div class="filter-actions">
+          <button id="btn-apply-filters" class="btn btn-primary">Filter</button>
+          <button id="btn-reset-filters" class="btn btn-secondary">Reset</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="properties-section" class="properties-section">
+    <div class="section-container">
+      <h2 id="properties-count">Loading listings...</h2>
+      <div class="properties-grid" id="properties-grid"></div>
+    </div>
+  </section>
+
+  <section id="map-section" class="map-section">
+    <div class="section-container">
+      <h2>Interactive Map (Leaflet OSM)</h2>
+      <div id="main-map" class="interactive-map"></div>
+    </div>
+  </section>
+
+  <div class="admin-modal" id="admin-modal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header"><h3>Admin Panel</h3><button class="btn-close" id="admin-modal-close">&times;</button></div>
+      <div class="admin-modal-body" id="admin-login-view">
+        <input type="password" id="admin-pass-input" placeholder="Password">
+        <button id="btn-admin-login-submit" class="btn btn-primary">Login</button>
+      </div>
+      <div class="admin-dashboard-view hidden" id="admin-dashboard-view">
+        <table class="admin-table"><thead><tr><th>IP</th><th>Path</th><th>Device</th></tr></thead><tbody id="admin-logs-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-container">
+      <p>&copy; 2026 FindHome Vietnam • WhatsApp +34 603 331 391</p>
+    </div>
+  </footer>
+
+  <script src="static/js/app.js?v=1"></script>
+</body>
+</html>
