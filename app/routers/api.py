@@ -27,11 +27,36 @@ async def get_subdivisions():
 
 @router.post("/voice/query")
 async def query_voice(payload: VoiceQueryRequest):
-    return voice_agent.process_query(payload.query, lang=payload.lang)
+    return voice_agent.process_query(payload.query, lang=payload.lang, user_id="web_session", channel="web")
 
 @router.post("/whatsapp/webhook")
 async def whatsapp_webhook(payload: Dict[str, Any]):
-    return {"status": "ok", "reply": "Thank you for contacting FindHome Vietnam. Connecting to coordinator."}
+    message_text = payload.get("message", payload.get("Body", payload.get("text", "")))
+    sender_phone = payload.get("from", payload.get("From", payload.get("from_number", "WhatsApp Visitor")))
+    sender_name = payload.get("name", payload.get("ProfileName", "Direct Inquiry"))
+
+    result = voice_agent.process_query(
+        message_text,
+        lang=None,
+        user_id=str(sender_phone),
+        user_name=str(sender_name),
+        channel="whatsapp"
+    )
+    reply_text = result.get("reply_text", "Thank you for contacting us.")
+    try:
+        from app.models.database import record_whatsapp_log
+        record_whatsapp_log(str(sender_phone), str(sender_name), str(message_text), str(reply_text))
+    except Exception:
+        pass
+
+    return {
+        "status": "success",
+        "sender": sender_phone,
+        "reply": reply_text,
+        "auto_reply": reply_text,
+        "action": result.get("action"),
+        "whatsapp_url": result.get("whatsapp_url")
+    }
 
 @router.post("/admin/login")
 async def admin_login(payload: AdminLoginRequest):
